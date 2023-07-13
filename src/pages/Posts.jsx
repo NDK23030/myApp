@@ -13,7 +13,7 @@ import MyButton from "../components/UI/button/MyButton";
 import Loader from "../components/UI/loader/Loader";
 import { useFetching } from "../components/hooks/useFetching";
 import { getPageCount } from "../utils/pages";
-import Pagination from "../components/UI/pagination/Pagination";
+// import Pagination from "../components/UI/pagination/Pagination";
 import { useObserver } from "../components/hooks/useObserver";
 import MySelect from "../components/UI/select/MySelect";
 
@@ -41,6 +41,7 @@ function Posts() {
 
 	useEffect(() => {
 		fetchPosts(limit, page);
+		// eslint-disable-next-line
 	}, [page, limit])
 
 	const createPost = (newPost) => {
@@ -50,10 +51,6 @@ function Posts() {
 
 	const removePost = (post) => {
 		setPosts(posts.filter(p => p.id !== post.id))
-	}
-
-	const changePage =(page) => {
-		setPage(page);
 	}
 
 	return (
