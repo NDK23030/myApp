@@ -1,9 +1,10 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import PostList from "./components/PostList";
-import MyButton from "./components/UI/button/MyButton";
-import MyInput from "./components/UI/input/MyInput";
+import PostForm from "./components/PostForm";
 
 import './styles/App.css';
+import MySelect from "./components/UI/select/MySelect";
+import MyInput from "./components/UI/input/MyInput";
 
 function App() {
 	const [posts, setPosts] = useState([
@@ -11,33 +12,51 @@ function App() {
 		{id: 2, title: 'JavaScript 2', body: 'Description'},
 		{id: 3, title: 'JavaScript 3', body: 'Description'}
 	]);
-	const [post, setPost] = useState({ title: '', body: ''});
+	const [selectedSort, setSelectedSort] = useState('');
+	const [searchQuery, setSearchQuery] = useState('');
 
-	const addNewPost = (e) => {
-		e.preventDefault();
-		setPosts([...posts, {...post, id: Date.now()}]);
-		setPost({ title: '', body: ''});
+	const sortedPosts = [...posts].sort((a, b) => a[selectedSort].localeCompare(b[selectedSort]))
+
+	const createPost = (newPost) => {
+		setPosts([...posts, newPost]);
+	};
+
+	const removePost = (post) => {
+		setPosts(posts.filter(p => p.id !== post.id))
+	}
+
+	const sortPosts = (sort) => {
+		setSelectedSort(sort);
 	}
 
 	return (
 	<div className="App">
-		<form action="">
-			{/* Управляемый компонент */}
-			<MyInput 
-				value={post.title}
-				onChange={e => setPost({...post, title: e.target.value})}
-				type="text" 
-				placeholder="Название поста"/>
+		<PostForm create={createPost}/>
+		<hr style={{margin: ' 15px 0'}}/>
+		<div>
 			<MyInput
-				value={post.body}
-				onChange={e => setPost({...post, body: e.target.value})}
-				type="text" 
-				placeholder="Описание поста"/>
-			<MyButton onClick={addNewPost}>Создать пост</MyButton>
-		</form>
-		<PostList posts={posts} title="Список постов"/>
+				value={searchQuery}
+				onChange={e => setSearchQuery(e.target.value)}
+				placeholder='Поиск'
+			/>
+			<MySelect
+				value={selectedSort}
+				onChange={sortPosts}
+				defaultVaule='Сортировка по'
+				options={[
+					{value: 'title', name: 'По названию'},
+					{value: 'body', name: 'По описанию'}
+				]}
+			/>
+		</div>
+		{posts.length
+			? <PostList remove={removePost} posts={sortedPosts} title="Список постов"/>
+			: 
+			<h1 style={{textAlign: "center"}}>
+				Посты не найдены
+			</h1>
+		}	
 	</div>
-	
 	);
 }
 
